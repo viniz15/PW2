@@ -1,5 +1,5 @@
 <?php
-class usuario{
+class Usuario{
 //declara as variaveis
     private $id;
     private $nome;
