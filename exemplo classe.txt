@@ -1,0 +1,99 @@
+Nossa classe Aluno já esta conectando com um banco de dados. 
+Tambem ja acessamos os atributos da classe atraves dos metodos getters e setters.
+Vamos agora criar uma tabela alunos dentro do banco de dados etimpwii com os comandos:
+Create table aluno(
+  id int primary key auto_increment.
+  ra int,
+  nome varchar(100),
+  curso varchar(100),
+  periodo varchar(50)
+);
+
+Nessa tabela o id é auto incrementado, o que significa que ao inserir um registro ele atualiza o numero do id automaticamente, entao nao precisamos enviar o id para inserir um aluno.
+O comando para inserir um aluno na tabela é:
+INSERT INTO aluno SET nome = "Fabio", ra = 123, curso = "Desenvolvimento de Sistemas", periodo = "matutino".
+Precisamos de nome, ra, curso e periodo para inserir um aluno.
+
+Podemos entao criar um metodo que insira esses dados na tabela:
+
+function cadastraAluno($nome, $ra, $curso, $periodo){
+  $cmd = "INSERT INTO aluno SET nome = $nome, ra = $ra, curso = $curso, periodo = $perido";
+  
+  //quando colocamos uma variavel dentro de aspas duplas, o PHP exibe o conteudo da variavel. Isso pode ser uma falha de seguranca
+  //nao deixamos essa linha assim, expondo os dados do aluno, entao podemos colocar um apelido que fica invisivel.
+  //colocamos um apelido para cada parametro recebido pelo metodo. Para criar um apelido usamos : e um nome qualquer. Exemplo:
+ 
+  $cmd = "INSERT INTO aluno SET nome = :n, ra = :r, curso = :c, periodo = :p";
+  
+  $cmd = $this-pdo->prepare($cmd);
+
+  //Depois que colocamos o apelido, temos que explicar para o PHP qual variavel esta ligada a qual apelido, com o bindValue:
+  //dizemos para o bindValue: onde voce encontrar o :n, substitua pelo valor do nome, e assim por diante.
+  $cmd->bindValue( ":n", $nome );
+  $cmd->bindValue( ":r", $ra );
+  $cmd->bindValue( ":c", $curso );
+  $cmd->bindValue( ":p", $periodo );
+
+  //podemos pedir para ele retornar o resultado se conseguiu ou nao inserir o registro. Entao o retorno desse metodo vai ser sempre verdadeiro ou falso
+  return $cmd->execute();
+}
+
+Na parte do front-end, vamos criar um formulario que pegue esses dados para poder cadastrar na tabela.
+Esse formulario podemos criar em HTML ou PHP. Se eu quizer tratar os dados na mesma pagina, crio em PHP, se quizer passar os dados para outra pagina, posso criar em HTML.
+Vamos criar entao em PHP, criando o formulario com o metodo post. O metodo post cria um vetor com o nome do campo e o conteudo do campo digitado pelo usuario.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <style>
+        label{
+            display: block;
+        }
+    </style>
+    <title>Cadastro de alunos</title>
+</head>
+<body>
+    <form action="" method="post">
+        <label for="ra">RA do aluno</label>
+        <input type="text" name="ra">
+        <label for="nome">Nome</label>
+        <input type="text name nome">
+        <label for="curso">Curso</label>
+        <input type="text" name="curso">
+        <label for="periodo">Periodo</label>
+        <input type="text" name="periodo">
+
+        <input type="submit" value="Cadastrar">
+
+    </form>
+    
+</body>
+</html>
+
+
+Depois, a gente abre o php e insere a classe Aluno depois do fechamento da tag html:
+<?php
+require 'Aluno.class.php';
+
+No proximo passo, pegamos os valores que estao no vetor post, e passamos para variaveis locais, para ficar mais facil trabalhar com esses dados:
+$ra      = $_POST['ra'];
+$nome    = $_POST['nome'];
+$curso   = $_POST['curso'];
+$periodo = $_POST['periodo'];
+
+Toda vez que pegamos dados digitados pelo usuario, temos que validar esses dados para saber se ele nao esta digitando comandos ao inves dos dados, o que chamamos de sql injection. Mas isso é assunto para outra aula.
+Entao o processo é o seguinte: vamos criar um formulario que peça ao usuario esses dados, depois basta instanciar a classe Aluno e chamar o metodo cadastrarAluno:
+
+#con = $aluno = new Aluno();
+
+if (!$con){
+   exit;
+}else{
+   $isOk = $aluno->cadastrarAluno($ra, $nome, $curso, $periodo);
+
+ 
+
+ATIVIDADE PRATICA II - PWII - BIM II
+Crie um formulario para pegar os dados do usuario e cadastrar na tabela
