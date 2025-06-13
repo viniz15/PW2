@@ -42,20 +42,32 @@ class Aluno {
         $this ->periodo = $periodo;
     }
 
-    public function _construct (){
+    public function conectar(){
         //A Classe PDO Foi criada para auxiliar a interação com DB
         //Ela precisa de 3 Atributos
-
-        $dns = "mysql:dbname=usuarioetimpwii;host=localhost";
-        $user = "root";
-        $pass = "";
+        $dns    ="mysql:dbname=aluno;host=localhost";
+        $dbUser ="root";
+        $dbPass ="";
 
         try {
-            $this-> pdo = new PDO($dns,$user,$pass);
-            return true;
-        } catch (\Throwable $th) {
+           $this->pdo = new PDO($dns, $dbUser, $dbPass);
+           return true;
+        } catch (exception $e){
             return false;
         }
 
     }
-}
+
+    public function cadastrarAluno($nome, $ra, $periodo, $curso){
+        //passo 01 criar uma var vom a consulta
+        $sql = "INSERT INTO aluno set nome = $nome, ra = $ra, curso = $curso, periodo = $periodo ";
+        echo $sql;
+        //passo 02
+
+        //passo 03
+
+        //passo 04
+    }
+
+    
+};
